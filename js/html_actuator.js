@@ -1,10 +1,11 @@
 function HTMLActuator() {
-  this.tileContainer    = document.querySelector(".tile-container");
-  this.scoreContainer   = document.querySelector(".score-container");
-  this.bestContainer    = document.querySelector(".best-container");
+  this.tileContainer = document.querySelector(".tile-container");
   this.messageContainer = document.querySelector(".game-message");
 
-  this.score = 0;
+  this.maxRed = 0;
+  this.redScore = 0;
+  this.maxGreen = 0;
+  this.greenScore = 0;
 }
 
 HTMLActuator.prototype.actuate = function (grid, metadata) {
@@ -21,17 +22,26 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
       });
     });
 
-    self.updateScore(metadata.score);
-    self.updateBestScore(metadata.bestScore);
+    self.updateScore(metadata.maxRed, metadata.redScore, RED_PLAYER, metadata.redScoreChange);
+    self.updateScore(metadata.maxGreen, metadata.greenScore, GREEN_PLAYER, metadata.greenScoreChange);
 
     if (metadata.terminated) {
       if (metadata.over) {
-        self.message(false); // You lose
+        self.message(false, metadata); // when the game is over
       } else if (metadata.won) {
-        self.message(true); // You win!
+        self.message(true, metadata); // when one player gets 2048
       }
     }
 
+    let redTurnTxtContainer = document.querySelector(".red-txt-container");
+    let greenTurnTxtContainer = document.querySelector(".green-txt-container");
+    if (metadata.turn === RED_PLAYER) {
+      redTurnTxtContainer.textContent = metadata.isPlayWithBot ? "Bot is thinking..." : "RED's Turn";
+      greenTurnTxtContainer.textContent = " ";
+    } else {
+      redTurnTxtContainer.textContent = " ";
+      greenTurnTxtContainer.textContent = metadata.isPlayWithBot ? "Your Turn" : "GREEN's Turn";
+    }
   });
 };
 
@@ -49,13 +59,13 @@ HTMLActuator.prototype.clearContainer = function (container) {
 HTMLActuator.prototype.addTile = function (tile) {
   var self = this;
 
-  var wrapper   = document.createElement("div");
-  var inner     = document.createElement("div");
-  var position  = tile.previousPosition || { x: tile.x, y: tile.y };
+  var wrapper = document.createElement("div");
+  var inner = document.createElement("div");
+  var position = tile.previousPosition || {x: tile.x, y: tile.y};
   var positionClass = this.positionClass(position);
 
   // We can't use classlist because it somehow glitches when replacing classes
-  var classes = ["tile", "tile-" + tile.value, positionClass];
+  var classes = ["tile", "tile-" + tile.value + '-' + tile.player, positionClass];
 
   if (tile.value > 2048) classes.push("tile-super");
 
@@ -67,7 +77,7 @@ HTMLActuator.prototype.addTile = function (tile) {
   if (tile.previousPosition) {
     // Make sure that the tile gets rendered in the previous position first
     window.requestAnimationFrame(function () {
-      classes[2] = self.positionClass({ x: tile.x, y: tile.y });
+      classes[2] = self.positionClass({x: tile.x, y: tile.y});
       self.applyClasses(wrapper, classes); // Update the position
     });
   } else if (tile.mergedFrom) {
@@ -95,7 +105,7 @@ HTMLActuator.prototype.applyClasses = function (element, classes) {
 };
 
 HTMLActuator.prototype.normalizePosition = function (position) {
-  return { x: position.x + 1, y: position.y + 1 };
+  return {x: position.x + 1, y: position.y + 1};
 };
 
 HTMLActuator.prototype.positionClass = function (position) {
@@ -103,30 +113,44 @@ HTMLActuator.prototype.positionClass = function (position) {
   return "tile-position-" + position.x + "-" + position.y;
 };
 
-HTMLActuator.prototype.updateScore = function (score) {
-  this.clearContainer(this.scoreContainer);
+HTMLActuator.prototype.updateScore = function (maxScore, score, player, difference) {
+  let scoreContainer = document.querySelector(`.scores-container-${player} .score-container`);
+  this.clearContainer(scoreContainer);
 
-  var difference = score - this.score;
-  this.score = score;
+  if (player === RED_PLAYER) {
+    this.redScore = score;
+    this.maxRed = maxScore;
+    scoreContainer.textContent = `${this.maxRed}/${this.redScore}`;
+  }
 
-  this.scoreContainer.textContent = this.score;
+  if (player === GREEN_PLAYER) {
+    this.greenScore = score;
+    this.maxGreen = maxScore;
+    scoreContainer.textContent = `${this.maxGreen}/${this.greenScore}`;
+  }
 
   if (difference > 0) {
     var addition = document.createElement("div");
     addition.classList.add("score-addition");
     addition.textContent = "+" + difference;
 
-    this.scoreContainer.appendChild(addition);
+    scoreContainer.appendChild(addition);
   }
 };
 
-HTMLActuator.prototype.updateBestScore = function (bestScore) {
-  this.bestContainer.textContent = bestScore;
-};
-
-HTMLActuator.prototype.message = function (won) {
-  var type    = won ? "game-won" : "game-over";
-  var message = won ? "You win!" : "Game over!";
+HTMLActuator.prototype.message = function (won, metadata) {
+  var type = won ? "game-won" : "game-over";
+  var message = "Game over!";
+  if (won) {
+    if (metadata.winner === RED_PLAYER) message = "Red wins!";
+    else if (metadata.winner === GREEN_PLAYER) message = "Green wins!";
+  } else {
+    if (metadata.maxRed > metadata.maxGreen) message = "Red wins!\nBiggest tile: " + metadata.maxRed;
+    else if (metadata.maxRed < metadata.maxGreen) message = "Green wins!\nBiggest tile: " + metadata.maxGreen;
+    else if (metadata.redScore > metadata.greenScore) message = "Red wins!\nScore: " + metadata.redScore;
+    else if (metadata.redScore < metadata.greenScore) message = "Green wins!\nScore: " + metadata.greenScore;
+    else message = "It's a draw!";
+  }
 
   this.messageContainer.classList.add(type);
   this.messageContainer.getElementsByTagName("p")[0].textContent = message;

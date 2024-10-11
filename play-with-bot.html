@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>2048+: Two players</title>
+
+    <link href="style/main.css" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="meta/apple-touch-icon.png">
+    <link rel="apple-touch-startup-image" href="meta/apple-touch-startup-image-640x1096.png"
+          media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+    <!-- iPhone 5+ -->
+    <link rel="apple-touch-startup-image" href="meta/apple-touch-startup-image-640x920.png"
+          media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)">
+    <!-- iPhone, retina -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport"
+          content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/dist/css/shepherd.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script type="application/javascript" src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" defer></script>
+    <style>
+      .share-buttons a img {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+      }
+    </style>
+</head>
+<body>
+<div class="lower share-buttons">
+    <a id="share-x">
+        <img src="assets/x_favicon.ico" alt="X Logo">
+    </a>
+    <a id="share-facebook">
+        <img src="assets/fb_favicon.ico" alt="Facebook Logo">
+    </a>
+    <a id="share-line">
+        <img src="assets/line_favicon.ico" alt="Line Logo">
+    </a>
+</div>
+<div class="container">
+    <div class="above-game">
+        <a class="restart-button">New Game</a>
+    </div>
+    <div class="scores-container-red">
+        <div class="score-container">0</div>
+        <div style="display: block; height: 10px; color: #ff3333" class="red-txt-container"></div>
+    </div>
+    <div class="game-container">
+        <div class="game-message">
+            <p></p>
+            <div class="lower">
+                <a class="retry-button">Try again</a>
+            </div>
+            <div class="lower share-buttons">
+                <button>
+                    <img id="share-x" src="assets/x_favicon.ico" alt="X Logo">
+                </button>
+                <img id="share-facebook" src="assets/fb_favicon.ico" alt="Facebook Logo">
+                <img id="share-line" src="assets/line_favicon.ico" alt="Line Logo">
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+        </div>
+
+        <div class="tile-container example-css-selector">
+
+        </div>
+    </div>
+    <div class="scores-container-green">
+        <div class="score-container">0</div>
+        <div style="display: block; height: 10px; color: #9e9d24" class="green-txt-container"></div>
+    </div>
+</div>
+
+<script src="js/bind_polyfill.js"></script>
+<script src="js/classlist_polyfill.js"></script>
+<script src="js/animframe_polyfill.js"></script>
+<script src="js/keyboard_input_manager.js"></script>
+<script src="js/html_actuator.js"></script>
+<script src="js/grid.js"></script>
+<script src="js/tile.js"></script>
+<script src="js/local_storage_manager.js"></script>
+<script src="js/game_manager.js"></script>
+<script src="js/application_with_bot.js"></script>
+<script type="module">
+  // import Shepherd from 'https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/dist/esm/shepherd.mjs';
+  // const tour = new Shepherd.Tour({
+  //   useModalOverlay: true,
+  //   defaultStepOptions: {
+  //     classes: 'shadow-md bg-purple-dark',
+  //     scrollTo: true
+  //   }
+  // });
+  //
+  // tour.addStep({
+  //   id: 'example-step',
+  //   text: 'This step is attached to the bottom of the <code><a href="https://localhost">AAA</a>.example-css-selector</code> element.',
+  //   attachTo: {
+  //     element: '.example-css-selector',
+  //     on: 'bottom'
+  //   },
+  //   classes: 'example-step-extra-class',
+  //   buttons: [
+  //     {
+  //       text: 'Next',
+  //       action: tour.next
+  //     }
+  //   ]
+  // });
+  //
+  // tour.start()
+</script>
+<script>document.getElementById('share-x').addEventListener('click', function () {
+  console.log("X");
+  shareToPlatform('x');
+});
+
+document.getElementById('share-facebook').addEventListener('click', function () {
+  shareToPlatform('facebook');
+});
+
+document.getElementById('share-line').addEventListener('click', function () {
+  shareToPlatform('line');
+});
+
+function shareToPlatform(platform) {
+  html2canvas(document.body).then(canvas => {
+    const screenshot = canvas.toDataURL('image/png');
+    const text = "Check out this game!";
+    const link = "https://yourgameurl.com";
+
+    if (navigator.share) {
+      navigator.share({
+        title: '2048+: Two players',
+        text: text,
+        url: link
+      }).then(() => {
+        console.log('Successful share');
+      }).catch((error) => {
+        console.log('Error sharing', error);
+      });
+    } else {
+      console.log('Web Share API not supported');
+      if (platform === 'x') {
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}&hashtags=game&via=yourhandle`;
+        window.open(url);
+      } else if (platform === 'facebook') {
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent(text)}`;
+        window.open(url);
+      } else if (platform === 'line') {
+        const url = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
+        window.open(url);
+      }
+    }
+  });
+}</script>
+</body>
+</html>
