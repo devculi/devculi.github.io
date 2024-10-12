@@ -49,11 +49,11 @@
             <div class="lower">
                 <a class="retry-button">Try again</a>
             </div>
-            <div class="lower share-buttons">
-                <img id="share-x" src="assets/x_favicon.ico" alt="X Logo">
-                <img id="share-facebook" src="assets/fb_favicon.ico" alt="Facebook Logo">
-                <img id="share-line" src="assets/line_favicon.ico" alt="Line Logo">
-            </div>
+<!--            <div class="lower share-buttons">-->
+<!--                <img id="share-x" src="assets/x_favicon.ico" alt="X Logo">-->
+<!--                <img id="share-facebook" src="assets/fb_favicon.ico" alt="Facebook Logo">-->
+<!--                <img id="share-line" src="assets/line_favicon.ico" alt="Line Logo">-->
+<!--            </div>-->
         </div>
 
         <div class="grid-container">
@@ -131,47 +131,47 @@
   //
   // tour.start()
 </script>
-<script>document.getElementById('share-x').addEventListener('click', function () {
-  shareToPlatform('x');
-});
+<!--<script>document.getElementById('share-x').addEventListener('click', function () {-->
+<!--  shareToPlatform('x');-->
+<!--});-->
 
-document.getElementById('share-facebook').addEventListener('click', function () {
-  shareToPlatform('facebook');
-});
+<!--document.getElementById('share-facebook').addEventListener('click', function () {-->
+<!--  shareToPlatform('facebook');-->
+<!--});-->
 
-document.getElementById('share-line').addEventListener('click', function () {
-  shareToPlatform('line');
-});
+<!--document.getElementById('share-line').addEventListener('click', function () {-->
+<!--  shareToPlatform('line');-->
+<!--});-->
 
-function shareToPlatform(platform) {
-  html2canvas(document.body).then(canvas => {
-    const screenshot = canvas.toDataURL('image/png');
-    const text = "Check out this game!";
-    const link = "https://yourgameurl.com";
+<!--function shareToPlatform(platform) {-->
+<!--  html2canvas(document.body).then(canvas => {-->
+<!--    const screenshot = canvas.toDataURL('image/png');-->
+<!--    const text = "Check out this game!";-->
+<!--    const link = "https://yourgameurl.com";-->
 
-    if (navigator.share) {
-      navigator.share({
-        title: '2048+: Two players',
-        text: text,
-        url: link
-      }).then(() => {
-        console.log('Successful share');
-      }).catch((error) => {
-        console.log('Error sharing', error);
-      });
-    } else {
-      if (platform === 'x') {
-        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}&hashtags=game&via=yourhandle`;
-        window.open(url);
-      } else if (platform === 'facebook') {
-        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent(text)}`;
-        window.open(url);
-      } else if (platform === 'line') {
-        const url = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
-        window.open(url);
-      }
-    }
-  });
-}</script>
+<!--    if (navigator.share) {-->
+<!--      navigator.share({-->
+<!--        title: '2048+: Two players',-->
+<!--        text: text,-->
+<!--        url: link-->
+<!--      }).then(() => {-->
+<!--        console.log('Successful share');-->
+<!--      }).catch((error) => {-->
+<!--        console.log('Error sharing', error);-->
+<!--      });-->
+<!--    } else {-->
+<!--      if (platform === 'x') {-->
+<!--        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}&hashtags=game&via=yourhandle`;-->
+<!--        window.open(url);-->
+<!--      } else if (platform === 'facebook') {-->
+<!--        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent(text)}`;-->
+<!--        window.open(url);-->
+<!--      } else if (platform === 'line') {-->
+<!--        const url = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;-->
+<!--        window.open(url);-->
+<!--      }-->
+<!--    }-->
+<!--  });-->
+<!--}</script>-->
 </body>
 </html>
