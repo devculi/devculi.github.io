@@ -42,9 +42,13 @@ function copy(state) {
   return game;
 }
 
+GameManager.prototype.storageKey = function () {
+  return this.isPlayWithBot ? "gameStateBot" : "gameState";
+};
+
 // Restart the game
 GameManager.prototype.restart = function () {
-  this.storageManager.clearGameState();
+  this.storageManager.clearGameState(this.storageKey());
   this.actuator.continueGame(); // Clear the game won/lost message
   this.setup();
 };
@@ -56,7 +60,7 @@ GameManager.prototype.isGameTerminated = function () {
 
 // Set up the game
 GameManager.prototype.setup = function () {
-  var previousState = this.storageManager.getGameState();
+  var previousState = this.storageManager.getGameState(this.storageKey());
 
   // Reload the game from a previous game if present
   if (previousState) {
@@ -121,9 +125,9 @@ GameManager.prototype.addRandomTile = function (player) {
 GameManager.prototype.actuate = function () {
   // Clear the state when the game is over (game over only, not win)
   if (this.over) {
-    this.storageManager.clearGameState();
+    this.storageManager.clearGameState(this.storageKey());
   } else {
-    this.storageManager.setGameState(this.serialize());
+    this.storageManager.setGameState(this.storageKey(), this.serialize());
   }
 
   this.actuator.actuate(this.grid, {
